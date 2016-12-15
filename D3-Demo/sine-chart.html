@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" media="screen" href="page.css">
+    <link type="text/css" rel="stylesheet" media="screen" href="chart.css">
+</head>
+<body>
+<style>
+    html {
+        min-width: 960px;
+    }
+
+    body {
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+        margin: 1em auto 4em auto;
+        position: relative;
+        width: 800px;
+    }
+
+    h1 {
+        font-size: 64px;
+        font-weight: 300;
+        letter-spacing: -2px;
+        margin: .3em 0 .1em 0;
+    }
+
+    h2 {
+        margin-top: 2em;
+    }
+
+    h1, h2 {
+        text-rendering: optimizeLegibility;
+    }
+
+    h2 a {
+        color: #ccc;
+        left: -20px;
+        position: absolute;
+        width: 740px;
+    }
+
+    footer {
+        font-size: small;
+        margin-top: 8em;
+    }
+
+    header aside {
+        margin-top: 88px;
+    }
+
+    header aside,
+    footer aside {
+        color: #636363;
+        text-align: right;
+    }
+
+    aside {
+        font-size: small;
+        right: 0;
+        position: absolute;
+        width: 180px;
+    }
+
+    .attribution {
+        font-size: small;
+        margin-bottom: 2em;
+    }
+
+    body > p, li > p {
+        line-height: 1.5em;
+    }
+
+    body > p {
+        width: 720px;
+    }
+
+    body > blockquote {
+        width: 640px;
+    }
+
+    li {
+        width: 680px;
+    }
+
+    a {
+        color: steelblue;
+    }
+
+    a:not(:hover) {
+        text-decoration: none;
+    }
+
+    pre, code, textarea {
+        font-family: "Menlo", monospace;
+    }
+
+    code {
+        line-height: 1em;
+    }
+
+    textarea {
+        font-size: 100%;
+    }
+
+    body > pre {
+        border-left: solid 2px #ccc;
+        padding-left: 18px;
+        margin: 2em 0 2em -20px;
+    }
+
+    sup, sub {
+        line-height: 0;
+    }
+
+    q:before,
+    blockquote:before {
+        content: "“";
+    }
+
+    q:after,
+    blockquote:after {
+        content: "”";
+    }
+
+    blockquote:before {
+        position: absolute;
+        left: 2em;
+    }
+
+    blockquote:after {
+        position: absolute;
+    }
+    svg {
+        font: 10px sans-serif;
+    }
+
+    .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis line {
+        shape-rendering: auto;
+    }
+
+    .line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 1.5px;
+    }
+</style>
+<div id="vis"></div>
+<script src="http://d3js.org/d3.v2.min.js"></script>
+<script>
+    var samples, data, width, height, margin, w, h, xScale, yScale, svg, xAxis, yAxis, line, g, path;
+    samples = Math.PI * 3;
+    data = generateSineData(samples);
+    width = 800;
+    height = 500;
+    margin = {
+        top: 10,
+        right: 10,
+        bottom: 40,
+        left: 40
+    };
+    w = width - margin.right;
+    h = height - margin.top - margin.bottom;
+    xScale = d3.scale.linear().domain([0, samples - 1]).range([0, w]);
+    yScale = d3.scale.linear().domain([-1, 1]).range([h, 0]);
+    svg = d3.select('#vis').append('svg').attr('width', w + margin.left + margin.right).attr('height', h + margin.top + margin.bottom).append('g').attr('transform', "translate(" + margin.left + ", " + margin.top + ")");
+    svg.append("defs").append("clipPath").attr("id", "clip").append("rect").attr("width", w).attr("height", h);
+    xAxis = d3.svg.axis().scale(xScale).ticks(10).orient('bottom');
+    svg.append('g').attr('class', 'x axis').attr("transform", "translate(0," + h + ")").call(xAxis);
+    yAxis = d3.svg.axis().scale(yScale).ticks(5).orient('left');
+    svg.append('g').attr('class', 'y axis').call(yAxis);
+    line = d3.svg.line().x(function(d, i){
+        return xScale(i);
+    }).y(function(d, i){
+        return yScale(d);
+    }).interpolate('basis');
+    g = svg.append('g').attr('clip-path', 'url(#clip)');
+    path = g.append('path').attr('class', 'line').data([data]).attr('d', line).style('fill', 'green').style('stroke', 'red').style('stroke-width', '1px');
+    function generateSineData(samples){
+        return d3.range(0, 100).map(function(i){
+            return Math.sin(i);
+        });
+    }
+</script>
+</body>
+</html>
